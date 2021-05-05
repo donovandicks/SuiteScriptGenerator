@@ -77,15 +77,15 @@ fn set_script_type(file: &mut File, matches: &clap::ArgMatches) {
 }
 
 fn fill_imports(file: &mut File, mods: &[&str]) {
-    for i in 0..mods.len() {
-        write_to_file(file, format!("  {},\n", mods[i]).as_ref());
+    for module in mods {
+        write_to_file(file, format!("  {},\n", module).as_ref());
     }
 }
 
 fn fill_amd_args(file: &mut File, mods: &[&str]) {
     for i in 0..mods.len() {
         if i == 0 && i == mods.len() - 1 {
-            write_to_file(file, format!("{}", mods[i]).as_ref());
+            write_to_file(file, mods[i]);
         } else if i == 0 {
             write_to_file(file, format!("{},", mods[i]).as_ref());
         } else if i == mods.len() - 1 {
