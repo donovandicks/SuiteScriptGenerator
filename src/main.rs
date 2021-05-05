@@ -4,7 +4,7 @@ use std::fs::File;
 use std::path::Path;
 use std::io::prelude::*;
 
-const TYPES: [&'static str; 7] = [
+const TYPES: [&str; 7] = [
     "MapReduce",
     "UserEvent",
     "Scheduled",
@@ -14,7 +14,7 @@ const TYPES: [&'static str; 7] = [
     "RESTlet",
 ];
 
-const API: [&'static str; 6] = [
+const API: [&str; 6] = [
     "2.1",
     "2",
     "2.x",
@@ -76,13 +76,13 @@ fn set_script_type(file: &mut File, matches: &clap::ArgMatches) {
     }
 }
 
-fn fill_imports(file: &mut File, mods: &Vec<&str>) {
+fn fill_imports(file: &mut File, mods: &[&str]) {
     for i in 0..mods.len() {
         write_to_file(file, format!("  {},\n", mods[i]).as_ref());
     }
 }
 
-fn fill_amd_args(file: &mut File, mods: &Vec<&str>) {
+fn fill_amd_args(file: &mut File, mods: &[&str]) {
     for i in 0..mods.len() {
         if i == 0 && i == mods.len() - 1 {
             write_to_file(file, format!("{}", mods[i]).as_ref());
