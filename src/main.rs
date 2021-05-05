@@ -16,13 +16,11 @@ const TYPES: [&str; 7] = [
     "RESTlet",
 ];
 
-const API: [&str; 6] = [
+const API: [&str; 4] = [
     "2.1",
     "2",
     "2.x",
     "2.0",
-    "1.0",
-    "1",
 ];
 
 const COPYRIGHT: &str = "/**
