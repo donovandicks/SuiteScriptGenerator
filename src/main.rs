@@ -35,14 +35,14 @@ const COPYRIGHT: &str = "/**
 ";
 
 fn main() {
-    let matches = clap_app!(app =>
+    let matches = clap_app!(SuiteScriptGenerator =>
         (version: "0.1.0")
         (author: crate_authors!())
         (about: "Generates a SuiteScript file based on the given inputs")
-        (@arg FileName: -f --filename +takes_value +required {validate_file_name} "The name of the SuiteScript file")
+        (@arg FileName: -f --filename +takes_value +required {validate_file_name} "The name of the JavaScript file to be created")
         (@arg ScriptType: -t --stype +takes_value {validate_script_type} "The type of SuiteScript to create")
-        (@arg APIVersion: -v --version +takes_value {validate_api_version} "The API Version to use")
-        (@arg Modules: -m --modules +takes_value +multiple "The N/* modules to import into the project")
+        (@arg APIVersion: -v --version +takes_value {validate_api_version} "The SuiteScript API Version to use")
+        (@arg Modules: -m --modules +takes_value +multiple "The SuiteScript API modules (N/*) to import into the project")
     ).get_matches();
 
     let file_name = matches.value_of("FileName").unwrap();
