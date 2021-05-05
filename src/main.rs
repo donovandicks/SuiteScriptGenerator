@@ -77,27 +77,32 @@ fn set_script_type(file: &mut File, matches: &clap::ArgMatches) {
     }
 }
 
+fn fill_imports(file: &mut File, mods: &Vec<&str>) {
+    for i in 0..mods.len() {
+        write_to_file(file, format!("  {},\n", mods[i]).as_ref());
+    }
+}
+
+fn fill_amd_args(file: &mut File, mods: &Vec<&str>) {
+    for i in 0..mods.len() {
+        if i == 0 && i == mods.len() - 1 {
+            write_to_file(file, format!("{}", mods[i]).as_ref());
+        } else if i == 0 {
+            write_to_file(file, format!("{},", mods[i]).as_ref());
+        } else if i == mods.len() - 1 {
+            write_to_file(file, format!(" {}", mods[i]).as_ref());
+        } else {
+            write_to_file(file, format!(" {},", mods[i]).as_ref());
+        }
+    }
+}
+
 fn set_modules(file: &mut File, matches: &clap::ArgMatches) {
     if let Some(modules) = matches.values_of("Modules") {
         let mods: Vec<&str> = modules.collect();
-        for i in 0..mods.len() {
-            write_to_file(file, format!("  {},\n", mods[i]).as_ref());
-        }
-
+        fill_imports(file, &mods);
         write_to_file(file, &"], (");
-
-        for i in 0..mods.len() {
-            if i == 0 && i == mods.len() - 1 {
-                write_to_file(file, format!("{}", mods[i]).as_ref());
-            } else if i == 0 {
-                write_to_file(file, format!("{},", mods[i]).as_ref());
-            } else if i == mods.len() - 1 {
-                write_to_file(file, format!(" {}", mods[i]).as_ref());
-            } else {
-                write_to_file(file, format!(" {},", mods[i]).as_ref());
-            }
-        }
-
+        fill_amd_args(file, &mods);
         write_to_file(file, &") => {\n");
     } else {
         write_to_file(file, &"], () => {\n");
