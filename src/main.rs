@@ -4,7 +4,7 @@ use std::fs::File;
 use std::path::Path;
 use std::io::prelude::*;
 
-// TODO: Add list of accepted SuiteScript types
+// TODO: Add list of accepted SuiteScript API modules 
 
 const TYPES: [&str; 7] = [
     "MapReduce",
