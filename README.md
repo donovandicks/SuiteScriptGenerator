@@ -24,13 +24,13 @@ The CLI does the following:
 ## Usage
 
 To create a simple file skeleton:
-`suitescript -f myFile.js` or `suitescript --filename myFile.js`
+`suitescript -f basic.js` or `suitescript --filename myFile.js`
 
 To create a file with a specific version:
-`suitescript -f myFile.js -v 2.1`
+`suitescript -f versioned.js -v 2.1`
 
 To create a file for a specific script type:
-`suitescript -f myFile.js -t MapReduce`
+`suitescript -f typed.js -t MapReduce`
 
 To create a file with imported modules:
-`suitescript -f myFile.js -m record search`
+`suitescript -f imports.js -m record search`
