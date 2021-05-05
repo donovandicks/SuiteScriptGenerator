@@ -4,6 +4,8 @@ use std::fs::File;
 use std::path::Path;
 use std::io::prelude::*;
 
+// TODO: Add list of accepted SuiteScript types
+
 const TYPES: [&str; 7] = [
     "MapReduce",
     "UserEvent",
