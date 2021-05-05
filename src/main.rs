@@ -66,14 +66,13 @@ fn main() {
 
 fn set_script_type(file: &mut File, matches: &clap::ArgMatches) {
     let script_type = matches.value_of("ScriptType");
-    match script_type {
-        Some(stype) => {
-            match stype {
-                "MapReduce" | "UserEvent" | "Scheduled" | "Client" => write_to_file(file, format!(" * @NScriptType {}Script\n", stype).as_ref()),
-                _ => write_to_file(file, format!(" * @NScriptType {}\n", stype).as_ref()),
+    if let Some(stype) = script_type {
+        match stype {
+            "MapReduce" | "UserEvent" | "Scheduled" | "Client" => {
+                write_to_file(file, format!(" * @NScriptType {}Script\n", stype).as_ref());
             }
+            _ => write_to_file(file, format!(" * @NScriptType {}\n", stype).as_ref()),
         }
-        None => (),
     }
 }
 
@@ -119,7 +118,6 @@ fn write_to_file(file: &mut File, contents: &str) {
 
 fn validate_file_name(name: String) -> Result<(), String> {
     let path = Path::new(&name);
-    
     if let Some(ext) = path.extension() {
         if ext != "js" {
             return Err(String::from("Invalid file type"));
@@ -127,7 +125,6 @@ fn validate_file_name(name: String) -> Result<(), String> {
     } else {
         return Err(String::from("File name missing extension"));
     }
-
     Ok(())
 }
 
