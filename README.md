@@ -38,7 +38,7 @@ To create a file with imported modules:
 
 ## TODOs
 - [X] Parameterize the copyright message
-- [ ] Pull out constants to another file
+- [X] Pull out constants to another file
 - [X] Add support for mangled names where possible i.e. mApReDuCe will still product MapReduceScript
 - [ ] Support reading an input file for batch generating project files
 - [ ] Validate input for SuiteScript modules against list of supported/existing modules
