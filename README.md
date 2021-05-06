@@ -14,8 +14,8 @@ The CLI does the following:
 ## Options
 | Short | Long | Description | Default | Constraints |
 | ----- | ---- | ----------- | ------- | ----------- |
-|  -h   | --help | Displays the help message | N/A | The extension must be `.js` |
-|  -f   | --filename | The filename to be created | N/A | Required |
+|  -h   | --help | Displays the help message | N/A | N/A |
+|  -f   | --filename | The filename to be created | N/A | Required, The extension must be `.js` |
 |  -t   | --stype | The type of SuiteScript to be created | No type | Must be a valid SuiteScript type |
 |  -v   | --version | The SuiteScript API version to use | 2.1 | Must be either 2, 2.x, or 2.1 |
 |  -m   | --modules | The SuiteScript API modules to import | No modules | N/A |
