@@ -84,19 +84,12 @@ fn get_script_type(matches: &clap::ArgMatches) -> String {
     }
 }
 
-fn get_imports(mods: &[&str]) -> String {
-    mods.join(",\n  ")
-}
-
-fn get_amd_args(mods: &[&str]) -> String {
-    mods.join(", ")
-}
-
 fn set_modules(file: &mut File, matches: &clap::ArgMatches) {
     if let Some(modules) = matches.values_of("Modules") {
         let mods: Vec<&str> = modules.collect();
-        let imports = get_imports(&mods);
-        write_to_file(file, format!("  {},\n], ({}) => {{\n", imports, get_amd_args(&mods)).as_ref());
+        let imports = mods.join(",\n  ");
+        let args = mods.join(", ");
+        write_to_file(file, format!("  {},\n], ({}) => {{\n", imports, args).as_ref());
     } else {
         write_to_file(file, &"], () => {\n");
     }
