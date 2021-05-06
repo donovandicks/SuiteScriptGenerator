@@ -46,5 +46,6 @@ To create a file with a copyright doc comment:
 - [ ] Support reading an input file for batch generating project files
 - [X] Validate input for SuiteScript modules against list of supported/existing modules
 - [ ] Support custom names for module arguments
+- [ ] Support custom modules with local or absolute paths
 - [ ] Unit tests
 - [ ] Docs
