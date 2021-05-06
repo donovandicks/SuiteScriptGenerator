@@ -35,7 +35,23 @@ const COPYRIGHT: &str = "/**
 ";
 
 fn main() {
-    let matches = clap_app!(SuiteScriptGenerator =>
+    let matches = init_app();
+    let file_name = matches.value_of("FileName").unwrap();
+    let mut file = create_file(file_name);
+
+    write_to_file(&mut file, COPYRIGHT);
+    write_to_file(&mut file, format!("/**\n{}", get_script_type(&matches)).as_ref());
+
+    let api = matches.value_of("APIVersion").unwrap_or("2.1");
+    write_to_file(&mut file, format!(" * @NApiVersion {}\n */\n\ndefine([\n", api).as_ref());
+
+    set_modules(&mut file, &matches);
+
+    write_to_file(&mut file, &"\n});");
+}
+
+fn init_app() -> clap::ArgMatches<'static> {
+    clap_app!(SuiteScriptGenerator =>
         (version: "0.1.0")
         (author: crate_authors!())
         (about: "Generates a SuiteScript file based on the given inputs")
@@ -43,36 +59,17 @@ fn main() {
         (@arg ScriptType: -t --stype +takes_value {validate_script_type} "The type of SuiteScript to create")
         (@arg APIVersion: -v --version +takes_value {validate_api_version} "The SuiteScript API Version to use")
         (@arg Modules: -m --modules +takes_value +multiple "The SuiteScript API modules (N/*) to import into the project")
-    ).get_matches();
-
-    let file_name = matches.value_of("FileName").unwrap();
-    let mut file = create_file(file_name);
-
-    write_to_file(&mut file, COPYRIGHT);
-    write_to_file(&mut file, "/**\n");
-
-    set_script_type(&mut file, &matches);
-
-    let api = matches.value_of("APIVersion").unwrap_or("2.1");
-    write_to_file(&mut file, format!(" * @NApiVersion {}\n", api).as_ref());
-
-    write_to_file(&mut file, &" */\n\n");
-    write_to_file(&mut file, &"define([\n");
-
-    set_modules(&mut file, &matches);
-
-    write_to_file(&mut file, &"\n});");
+    ).get_matches()
 }
 
-fn set_script_type(file: &mut File, matches: &clap::ArgMatches) {
-    let script_type = matches.value_of("ScriptType");
-    if let Some(stype) = script_type {
-        match stype {
-            "MapReduce" | "UserEvent" | "Scheduled" | "Client" => {
-                write_to_file(file, format!(" * @NScriptType {}Script\n", stype).as_ref());
-            }
-            _ => write_to_file(file, format!(" * @NScriptType {}\n", stype).as_ref()),
+fn get_script_type(matches: &clap::ArgMatches) -> String {
+    let script_type = matches.value_of("ScriptType").unwrap_or("");
+    match script_type {
+        "MapReduce" | "UserEvent" | "Scheduled" | "Client" => {
+            return format!(" * @NScriptType {}Script\n", script_type);
         }
+        "" => return String::from(""),
+        _ => return format!(" * @NScriptType {}\n", script_type),
     }
 }
 
