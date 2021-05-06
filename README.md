@@ -34,3 +34,10 @@ To create a file for a specific script type:
 
 To create a file with imported modules:
 `suitescript -f imports.js -m record search`
+
+## TODOs
+- [ ] Support reading an input file for batch generating project files
+- [ ] Validate input for SuiteScript modules against list of supported/existing modules
+- [ ] Support custom names for module arguments
+- [ ] Unit tests
+- [ ] Docs
