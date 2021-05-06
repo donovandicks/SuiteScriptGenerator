@@ -33,7 +33,7 @@ fn main() {
     let api = matches.value_of("APIVersion").unwrap_or("2.1");
     write_to_file(&mut file, format!(" * @NApiVersion {}\n */\n\ndefine([\n", api).as_ref());
 
-    set_modules(&mut file, &matches);
+    write_modules(&mut file, &matches);
 
     write_to_file(&mut file, &"\n});");
 }
@@ -84,7 +84,7 @@ fn get_script_type(matches: &clap::ArgMatches) -> String {
     }
 }
 
-fn set_modules(file: &mut File, matches: &clap::ArgMatches) {
+fn write_modules(file: &mut File, matches: &clap::ArgMatches) {
     if let Some(modules) = matches.values_of("Modules") {
         let mods: Vec<&str> = modules.collect();
         let imports = mods.join(",\n  ");
