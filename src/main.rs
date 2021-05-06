@@ -23,23 +23,12 @@ const API: [&str; 4] = [
     "2.0",
 ];
 
-const COPYRIGHT: &str = "/**
- * Copyright (c) 2021 LogMeIn
- * 320 Summer St, Boston, MA
- * All Rights Reserved.
- *
- * THIS PROGRAM IS CONFIDENTIAL AND PROPRIETARY TO LOGMEIN
- * AND CONSTITUTES A VALUABLE TRADE SECRET.
- */
-
-";
-
 fn main() {
     let matches = init_app();
     let file_name = matches.value_of("FileName").unwrap();
     let mut file = create_file(file_name);
 
-    write_to_file(&mut file, format!("{}/**\n{}", COPYRIGHT, get_script_type(&matches)).as_ref());
+    write_to_file(&mut file, format!("{}/**\n{}", get_copyright(&matches), get_script_type(&matches)).as_ref());
 
     let api = matches.value_of("APIVersion").unwrap_or("2.1");
     write_to_file(&mut file, format!(" * @NApiVersion {}\n */\n\ndefine([\n", api).as_ref());
@@ -58,7 +47,17 @@ fn init_app() -> clap::ArgMatches<'static> {
         (@arg ScriptType: -t --stype +takes_value {validate_script_type} "The type of SuiteScript to create")
         (@arg APIVersion: -v --version +takes_value {validate_api_version} "The SuiteScript API Version to use")
         (@arg Modules: -m --modules +takes_value +multiple "The SuiteScript API modules (N/*) to import into the project")
+        (@arg CopyrightFile: -c --copyright +takes_value {validate_copyright_file} "A text file containing a copyright doc comment")
     ).get_matches()
+}
+
+fn get_copyright(matches: &clap::ArgMatches) -> String {
+    // TODO: Add newline after copyright if one does not exist
+    if let Some(copyright_file) = matches.value_of("CopyrightFile") {
+        return std::fs::read_to_string(copyright_file).expect("Failed to read file");
+    }
+
+    String::from("")
 }
 
 fn get_script_type(matches: &clap::ArgMatches) -> String {
@@ -98,16 +97,29 @@ fn write_to_file(file: &mut File, contents: &str) {
     file.write_all(contents.as_bytes()).unwrap();
 }
 
-fn validate_file_name(name: String) -> Result<(), String> {
+fn validate_file(path: &Path) -> Result<&std::ffi::OsStr, String> {
+    match path.extension() {
+        Some(ext) => Ok(ext),
+        None => Err(String::from("Invalid file type")),
+    }
+}
+
+fn validate_copyright_file(name: String) -> Result<(), String> {
     let path = Path::new(&name);
-    if let Some(ext) = path.extension() {
-        if ext != "js" {
-            return Err(String::from("Invalid file type"));
-        }
-    } else {
-        return Err(String::from("File name missing extension"));
+    let ext = validate_file(path).unwrap();
+    if ext != "txt" {
+        return Err(String::from("Invalid file type"));
     }
 
+    Ok(())
+}
+
+fn validate_file_name(name: String) -> Result<(), String> {
+    let path = Path::new(&name);
+    let ext = validate_file(path).unwrap();
+    if ext != "js" {
+        return Err(String::from("Invalid file type"));
+    }
 
     if name.contains("/") || name.contains("\\") {
         if let Some(parent) = path.parent() {
