@@ -6,7 +6,7 @@ This project was written to automate the boilerplate involved in creating valid 
 ## Features
 The CLI does the following:
 - Create a new file
-- Write the Copyright message to the file
+- Write a Copyright message to the file, if supplied
 - Write the SuiteScript script type, if supplied
 - Write the SuiteScript API version
 - Write the AMD Module Definition with SuiteScript modules (N/*), if supplied
@@ -15,7 +15,8 @@ The CLI does the following:
 | Short | Long | Description | Default | Constraints |
 | ----- | ---- | ----------- | ------- | ----------- |
 |  -h   | --help | Displays the help message | N/A | N/A |
-|  -f   | --filename | The filename to be created | N/A | Required, The extension must be `.js` |
+|  -f   | --filename | The filename to be created | N/A | Required, File extension must be `.js` |
+|  -c   | --copyright | The text file where the copyright message is stored | No copyright | File extension must be `.txt` |
 |  -t   | --stype | The type of SuiteScript to be created | No type | Must be a valid SuiteScript type |
 |  -v   | --version | The SuiteScript API version to use | 2.1 | Must be either 2, 2.x, or 2.1 |
 |  -m   | --modules | The SuiteScript API modules to import | No modules | N/A |
