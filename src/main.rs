@@ -59,11 +59,9 @@ fn map_script_to_name(stype: &str) -> &str {
 fn get_script_type(matches: &clap::ArgMatches) -> String {
     let script_type = map_script_to_name(matches.value_of("ScriptType").unwrap_or(""));
     match script_type {
-        "MapReduce" | "UserEvent" | "Scheduled" | "Client" => {
-            return format!(" * @NScriptType {}Script\n", script_type);
-        }
-        "" => return String::from(""),
-        _ => return format!(" * @NScriptType {}\n", script_type),
+        "MapReduce" | "UserEvent" | "Scheduled" | "Client" => format!(" * @NScriptType {}Script\n", script_type),
+        "" => String::from(""),
+        _ => format!(" * @NScriptType {}\n", script_type),
     }
 }
 
@@ -129,7 +127,7 @@ fn validate_file_name(name: String) -> Result<(), String> {
         return Err(String::from("Invalid file type: SuiteScript file must be a JavaScript file."));
     }
 
-    if name.contains("/") || name.contains("\\") {
+    if name.contains('/') || name.contains('\\') {
         if let Some(parent) = path.parent() {
             if !parent.is_dir() {
                 return Err(String::from("Parent directory does not exist"));
@@ -160,7 +158,7 @@ fn validate_api_version(api: String) -> Result<(), String> {
 fn validate_modules(name: String) -> Result<(), String> {
     let lower_case = name.to_lowercase();
     if !MODULES.contains(&&lower_case[..]) {
-        return Err(String::from(format!("Invalid module name {}", name)))
+        return Err(format!("Invalid module name {}", name))
     }
 
     Ok(())
