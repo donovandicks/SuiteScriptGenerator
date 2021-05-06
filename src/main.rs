@@ -88,9 +88,9 @@ fn get_module_names(modules: clap::Values) -> Vec<String> {
 fn write_modules(file: &mut File, matches: &clap::ArgMatches) {
     if let Some(modules) = matches.values_of("Modules") {
         let mods = get_module_names(modules);
-        let imports = mods.join(",\n  N/");
+        let imports = mods.join("',\n  'N/");
         let args = mods.join(", ");
-        write_to_file(file, format!("  N/{},\n], ({}) => {{\n", imports, args).as_ref());
+        write_to_file(file, format!("  'N/{}',\n], ({}) => {{\n", imports, args).as_ref());
     } else {
         write_to_file(file, &"], () => {\n");
     }
