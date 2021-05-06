@@ -18,7 +18,7 @@ The CLI does the following:
 |  -f   | --filename | The filename to be created | N/A | Required, File extension must be `.js` |
 |  -c   | --copyright | The text file where the copyright message is stored | No copyright | File extension must be `.txt` |
 |  -t   | --stype | The type of SuiteScript to be created | No type | Must be a valid SuiteScript type |
-|  -v   | --version | The SuiteScript API version to use | 2.1 | Must be either 2, 2.x, or 2.1 |
+|  -v   | --version | The SuiteScript API version to use | 2.1 | Must be either 2.0, 2.x, or 2.1 |
 |  -m   | --modules | The SuiteScript API modules to import | No modules | N/A |
 
 ## Usage
