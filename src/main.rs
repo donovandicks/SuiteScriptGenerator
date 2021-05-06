@@ -28,7 +28,7 @@ fn main() {
     let file_name = matches.value_of("FileName").unwrap();
     let mut file = create_file(file_name);
 
-    write_to_file(&mut file, format!("{}/**\n{}", get_copyright(&matches), get_script_type(&matches)).as_ref());
+    write_to_file(&mut file, format!("{}\n\n/**\n{}", get_copyright(&matches), get_script_type(&matches)).as_ref());
 
     let api = matches.value_of("APIVersion").unwrap_or("2.1");
     write_to_file(&mut file, format!(" * @NApiVersion {}\n */\n\ndefine([\n", api).as_ref());
@@ -52,9 +52,8 @@ fn init_app() -> clap::ArgMatches<'static> {
 }
 
 fn get_copyright(matches: &clap::ArgMatches) -> String {
-    // TODO: Add newline after copyright if one does not exist
     if let Some(copyright_file) = matches.value_of("CopyrightFile") {
-        return std::fs::read_to_string(copyright_file).expect("Failed to read file");
+        return std::fs::read_to_string(copyright_file).expect("Failed to read file").trim().to_string();
     }
 
     String::from("")
