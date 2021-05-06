@@ -52,9 +52,9 @@ fn main() {
 
 fn init_app() -> clap::ArgMatches<'static> {
     clap_app!(SuiteScriptGenerator =>
-        (version: "0.1.0")
+        (version: crate_version!())
         (author: crate_authors!())
-        (about: "Generates a SuiteScript file based on the given inputs")
+        (about: crate_description!())
         (@arg FileName: -f --filename +takes_value +required {validate_file_name} "The name of the JavaScript file to be created")
         (@arg ScriptType: -t --stype +takes_value {validate_script_type} "The type of SuiteScript to create")
         (@arg APIVersion: -v --version +takes_value {validate_api_version} "The SuiteScript API Version to use")
