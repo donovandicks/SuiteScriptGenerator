@@ -96,18 +96,19 @@ fn write_to_file(file: &mut File, contents: &str) {
     file.write_all(contents.as_bytes()).unwrap();
 }
 
-fn validate_file(path: &Path) -> Result<&std::ffi::OsStr, String> {
-    match path.extension() {
-        Some(ext) => Ok(ext),
-        None => Err(String::from("Invalid file type")),
+fn validate_file(path: &Path) -> String {
+    if let Some(ext) = path.extension() {
+        ext.to_str().unwrap().into()
+    } else {
+        String::from("File name missing extension")
     }
 }
 
 fn validate_copyright_file(name: String) -> Result<(), String> {
     let path = Path::new(&name);
-    let ext = validate_file(path).unwrap();
+    let ext = validate_file(path);
     if ext != "txt" {
-        return Err(String::from("Invalid file type"));
+        return Err(String::from("Invalid file type: copyright file must be a text file."));
     }
 
     Ok(())
@@ -115,9 +116,9 @@ fn validate_copyright_file(name: String) -> Result<(), String> {
 
 fn validate_file_name(name: String) -> Result<(), String> {
     let path = Path::new(&name);
-    let ext = validate_file(path).unwrap();
+    let ext = validate_file(path);
     if ext != "js" {
-        return Err(String::from("Invalid file type"));
+        return Err(String::from("Invalid file type: SuiteScript file must be a JavaScript file."));
     }
 
     if name.contains("/") || name.contains("\\") {
