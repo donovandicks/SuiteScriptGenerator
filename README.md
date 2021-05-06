@@ -21,7 +21,7 @@ The CLI does the following:
 |  -m   | --modules | The SuiteScript API modules to import | No modules | N/A |
 
 ## Usage
-The output files from the following commands are visible in the `examples` directory.
+The output files from the following commands are visible in the [examples](examples) directory.
 
 To create a simple file skeleton:
 `suitescript -f basic.js` or `suitescript --filename myFile.js`
