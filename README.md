@@ -36,12 +36,15 @@ To create a file for a specific script type:
 To create a file with imported modules:
 `suitescript -f imports.js -m record search`
 
+To create a file with a copyright doc comment:
+`suitescript -f copyright.js -c copyright.txt`
+
 ## TODOs
 - [X] Parameterize the copyright message
 - [X] Pull out constants to another file
 - [X] Add support for mangled names where possible i.e. mApReDuCe will still product MapReduceScript
 - [ ] Support reading an input file for batch generating project files
-- [ ] Validate input for SuiteScript modules against list of supported/existing modules
+- [X] Validate input for SuiteScript modules against list of supported/existing modules
 - [ ] Support custom names for module arguments
 - [ ] Unit tests
 - [ ] Docs
