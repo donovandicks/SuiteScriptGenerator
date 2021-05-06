@@ -24,12 +24,12 @@ const API: [&str; 4] = [
 ];
 
 const COPYRIGHT: &str = "/**
- * Copyright (c) 2021 LogMeIn,
- * 320 Summer St, Boston, MA,
- * All Rights Reserved.,
- *,
- * THIS PROGRAM IS CONFIDENTIAL AND PROPRIETARY TO LOGMEIN,
- * AND CONSTITUTES A VALUABLE TRADE SECRET.,
+ * Copyright (c) 2021 LogMeIn
+ * 320 Summer St, Boston, MA
+ * All Rights Reserved.
+ *
+ * THIS PROGRAM IS CONFIDENTIAL AND PROPRIETARY TO LOGMEIN
+ * AND CONSTITUTES A VALUABLE TRADE SECRET.
  */
 
 ";
@@ -39,8 +39,8 @@ fn main() {
     let file_name = matches.value_of("FileName").unwrap();
     let mut file = create_file(file_name);
 
-    write_to_file(&mut file, COPYRIGHT);
-    write_to_file(&mut file, format!("/**\n{}", get_script_type(&matches)).as_ref());
+    write_to_file(&mut file, format!(
+            "{}/**\n{}", COPYRIGHT, get_script_type(&matches)).as_ref());
 
     let api = matches.value_of("APIVersion").unwrap_or("2.1");
     write_to_file(&mut file, format!(" * @NApiVersion {}\n */\n\ndefine([\n", api).as_ref());
