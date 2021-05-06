@@ -3,6 +3,10 @@ name = "suitescript_generator"
 version = "0.1.0"
 authors = ["Donovan Dicks <donovan.dicks@outlook.com>"]
 edition = "2018"
+description = "Command line interface to create NetSuite SuiteScript files and generate boilerplate"
+repository = "https://github.com/donovandicks/SuiteScriptGenerator"
+keywords = ["NetSuite", "SuiteScript", "JavaScript"]
+categories = ["command-line-utilities", "command-line-interface"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
