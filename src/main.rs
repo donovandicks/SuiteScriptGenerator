@@ -127,9 +127,11 @@ fn validate_file_name(name: String) -> Result<(), String> {
     }
 
 
-    if let Some(parent) = path.parent() {
-        if !parent.is_dir() {
-            return Err(String::from("Parent directory does not exist"));
+    if name.contains("/") || name.contains("\\") {
+        if let Some(parent) = path.parent() {
+            if !parent.is_dir() {
+                return Err(String::from("Parent directory does not exist"));
+            }
         }
     }
 
