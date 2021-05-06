@@ -96,11 +96,11 @@ fn write_to_file(file: &mut File, contents: &str) {
     file.write_all(contents.as_bytes()).unwrap();
 }
 
-fn validate_file(path: &Path) -> String {
+fn validate_file(path: &Path) -> &str {
     if let Some(ext) = path.extension() {
-        ext.to_str().unwrap().into()
+        ext.to_str().unwrap()
     } else {
-        String::from("File name missing extension")
+        "File name missing extension"
     }
 }
 
