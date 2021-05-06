@@ -125,6 +125,14 @@ fn validate_file_name(name: String) -> Result<(), String> {
     } else {
         return Err(String::from("File name missing extension"));
     }
+
+
+    if let Some(parent) = path.parent() {
+        if !parent.is_dir() {
+            return Err(String::from("Parent directory does not exist"));
+        }
+    }
+
     Ok(())
 }
 
