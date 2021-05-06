@@ -3,25 +3,8 @@ extern crate clap;
 use std::fs::File;
 use std::path::Path;
 use std::io::prelude::*;
-
-// TODO: Add list of accepted SuiteScript API modules 
-
-const TYPES: [&str; 7] = [
-    "mapreduce",
-    "userevent",
-    "scheduled",
-    "client",
-    "suitelet",
-    "portlet",
-    "restlet",
-];
-
-const API: [&str; 4] = [
-    "2.1",
-    "2",
-    "2.x",
-    "2.0",
-];
+mod assets;
+use assets::netsuite_types::{TYPES, API, MODULES};
 
 fn main() {
     let matches = init_app();
