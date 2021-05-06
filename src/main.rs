@@ -39,8 +39,7 @@ fn main() {
     let file_name = matches.value_of("FileName").unwrap();
     let mut file = create_file(file_name);
 
-    write_to_file(&mut file, format!(
-            "{}/**\n{}", COPYRIGHT, get_script_type(&matches)).as_ref());
+    write_to_file(&mut file, format!("{}/**\n{}", COPYRIGHT, get_script_type(&matches)).as_ref());
 
     let api = matches.value_of("APIVersion").unwrap_or("2.1");
     write_to_file(&mut file, format!(" * @NApiVersion {}\n */\n\ndefine([\n", api).as_ref());
@@ -77,27 +76,15 @@ fn get_imports(mods: &[&str]) -> String {
     mods.join(",\n  ")
 }
 
-fn fill_amd_args(file: &mut File, mods: &[&str]) {
-    for i in 0..mods.len() {
-        if i == 0 && i == mods.len() - 1 {
-            write_to_file(file, mods[i]);
-        } else if i == 0 {
-            write_to_file(file, format!("{},", mods[i]).as_ref());
-        } else if i == mods.len() - 1 {
-            write_to_file(file, format!(" {}", mods[i]).as_ref());
-        } else {
-            write_to_file(file, format!(" {},", mods[i]).as_ref());
-        }
-    }
+fn get_amd_args(mods: &[&str]) -> String {
+    mods.join(", ")
 }
 
 fn set_modules(file: &mut File, matches: &clap::ArgMatches) {
     if let Some(modules) = matches.values_of("Modules") {
         let mods: Vec<&str> = modules.collect();
         let imports = get_imports(&mods);
-        write_to_file(file, format!("  {},\n], (", imports).as_ref());
-        fill_amd_args(file, &mods);
-        write_to_file(file, &") => {\n");
+        write_to_file(file, format!("  {},\n], ({}) => {{\n", imports, get_amd_args(&mods)).as_ref());
     } else {
         write_to_file(file, &"], () => {\n");
     }
