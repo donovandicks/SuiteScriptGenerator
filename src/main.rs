@@ -7,13 +7,13 @@ use std::io::prelude::*;
 // TODO: Add list of accepted SuiteScript API modules 
 
 const TYPES: [&str; 7] = [
-    "MapReduce",
-    "UserEvent",
-    "Scheduled",
-    "Client",
-    "Suitelet",
-    "Portlet",
-    "RESTlet",
+    "mapreduce",
+    "userevent",
+    "scheduled",
+    "client",
+    "suitelet",
+    "portlet",
+    "restlet",
 ];
 
 const API: [&str; 4] = [
@@ -59,8 +59,21 @@ fn get_copyright(matches: &clap::ArgMatches) -> String {
     String::from("")
 }
 
+fn map_script_to_name(stype: &str) -> &str {
+    match stype.to_lowercase().as_ref() {
+        "mapreduce" => "MapReduce",
+        "userevent" => "UserEvet",
+        "scheduled" => "Scheduled",
+        "client" => "Client",
+        "suitelet" => "Suitelet",
+        "restlet" => "RESTlet",
+        "portlet" => "Portlet",
+        _ => "INVALID",
+    }
+}
+
 fn get_script_type(matches: &clap::ArgMatches) -> String {
-    let script_type = matches.value_of("ScriptType").unwrap_or("");
+    let script_type = map_script_to_name(matches.value_of("ScriptType").unwrap_or(""));
     match script_type {
         "MapReduce" | "UserEvent" | "Scheduled" | "Client" => {
             return format!(" * @NScriptType {}Script\n", script_type);
@@ -133,7 +146,8 @@ fn validate_file_name(name: String) -> Result<(), String> {
 }
 
 fn validate_script_type(name: String) -> Result<(), String> {
-    if TYPES.contains(&&name[..]) {
+    let lower_case = name.to_lowercase();
+    if TYPES.contains(&&lower_case[..]) {
         return Ok(());
     }
 
