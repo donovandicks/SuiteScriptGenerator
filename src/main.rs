@@ -29,7 +29,7 @@ fn init_app() -> clap::ArgMatches<'static> {
         (@arg FileName: -f --filename +takes_value +required {validate_file_name} "The name of the JavaScript file to be created")
         (@arg ScriptType: -t --stype +takes_value {validate_script_type} "The type of SuiteScript to create")
         (@arg APIVersion: -v --version +takes_value {validate_api_version} "The SuiteScript API Version to use")
-        (@arg Modules: -m --modules +takes_value +multiple "The SuiteScript API modules (N/*) to import into the project")
+        (@arg Modules: -m --modules +takes_value +multiple {validate_modules} "The SuiteScript API modules (N/*) to import into the project")
         (@arg CopyrightFile: -c --copyright +takes_value {validate_copyright_file} "A text file containing a copyright doc comment")
     ).get_matches()
 }
@@ -67,9 +67,27 @@ fn get_script_type(matches: &clap::ArgMatches) -> String {
     }
 }
 
+fn map_module_to_name(module: &str) -> String {
+    let lower_case = module.to_lowercase();
+    match lower_case.as_str() {
+        "certificatecontrol" => "certificateControl".into(),
+        "currentrecord" => "currentRecord".into(),
+        "keycontrol" => "keyControl".into(),
+        "recordcontext" => "recordContext".into(),
+        "suiteappinfo" => "suiteAppInfo".into(),
+        "serverwidget" => "serverWidget".into(),
+        _ => lower_case,
+    }
+}
+
+fn get_module_names(modules: clap::Values) -> Vec<String> {
+    let mods: Vec<&str> = modules.collect();
+    mods.iter().map(|name| map_module_to_name(name)).collect()
+}
+
 fn write_modules(file: &mut File, matches: &clap::ArgMatches) {
     if let Some(modules) = matches.values_of("Modules") {
-        let mods: Vec<&str> = modules.collect();
+        let mods = get_module_names(modules);
         let imports = mods.join(",\n  ");
         let args = mods.join(", ");
         write_to_file(file, format!("  {},\n], ({}) => {{\n", imports, args).as_ref());
@@ -139,3 +157,11 @@ fn validate_api_version(api: String) -> Result<(), String> {
     Err(String::from("Invalid API version"))
 }
 
+fn validate_modules(name: String) -> Result<(), String> {
+    let lower_case = name.to_lowercase();
+    if !MODULES.contains(&&lower_case[..]) {
+        return Err(String::from(format!("Invalid module name {}", name)))
+    }
+
+    Ok(())
+}
