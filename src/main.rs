@@ -52,7 +52,7 @@ fn map_script_to_name(stype: &str) -> &str {
         "suitelet" => "Suitelet",
         "restlet" => "RESTlet",
         "portlet" => "Portlet",
-        _ => "INVALID",
+        _ => "",
     }
 }
 
