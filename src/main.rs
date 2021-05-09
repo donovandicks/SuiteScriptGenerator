@@ -191,4 +191,16 @@ mod tests {
         assert_eq!(validate_api_version(String::from("1")), Err(String::from("Invalid API version")));
         Ok(())
     }
+
+    #[test]
+    fn test_valid_script_type() -> Result<(), String> {
+        assert_eq!(validate_script_type(String::from("mapreduce")), Ok(()));
+        Ok(())
+    }
+
+    #[test]
+    fn test_invalid_script_type() -> Result<(), String> {
+        assert_eq!(validate_script_type(String::from("rest")), Err(String::from("Invalid script type")));
+        Ok(())
+    }
 }
