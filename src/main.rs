@@ -203,4 +203,16 @@ mod tests {
         assert_eq!(validate_script_type(String::from("rest")), Err(String::from("Invalid script type")));
         Ok(())
     }
+
+    #[test]
+    fn test_valid_file() -> Result<(), String> {
+        assert_eq!(validate_file(Path::new("test.js")), "js");
+        Ok(())
+    }
+
+    #[test]
+    fn test_invalid_file() -> Result<(), String> {
+        assert_eq!(validate_file(Path::new("test")), "File name missing extension");
+        Ok(())
+    }
 }
