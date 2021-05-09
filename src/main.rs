@@ -163,3 +163,20 @@ fn validate_modules(name: String) -> Result<(), String> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_valid_mod() -> Result<(), String> {
+        assert_eq!(validate_modules(String::from("record")), Ok(()));
+        Ok(())
+    }
+
+    #[test]
+    fn test_invalid_mod() -> Result<(), String> {
+        assert_eq!(validate_modules(String::from("reecord")), Err(String::from("Invalid module name reecord")));
+        Ok(())
+    }
+}
