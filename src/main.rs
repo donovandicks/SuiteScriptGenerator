@@ -228,4 +228,30 @@ mod tests {
             Err(String::from("Invalid file type: copyright file must be a text file.")));
         Ok(())
     }
+
+    #[test]
+    fn test_valid_script_file() -> Result<(), String> {
+        assert_eq!(validate_file_name(String::from("test.js")), Ok(()));
+        Ok(())
+    }
+
+    #[test]
+    fn test_invalid_script_file() -> Result<(), String> {
+        assert_eq!(validate_file_name(String::from("test")),
+            Err(String::from("Invalid file type: SuiteScript file must be a JavaScript file.")));
+        Ok(())
+    }
+
+    #[test]
+    fn test_valid_script_parent_dir() -> Result<(), String> {
+        assert_eq!(validate_file_name(String::from("src/test.js")), Ok(()));
+        Ok(())
+    }
+
+    #[test]
+    fn test_invalid_script_parent_dir() -> Result<(), String> {
+        assert_eq!(validate_file_name(String::from("nonexistent/test.js")), 
+            Err(String::from("Parent directory does not exist")));
+        Ok(())
+    }
 }
