@@ -21,6 +21,12 @@ fn main() {
     write_to_file(&mut file, &"\n});");
 }
 
+/// Initializes the CLI application
+///
+/// The CLI is started with several options. The default configuration is to generate a file with
+/// no copyright, no imports, no script type, and with API version 2.1. The script file name is
+/// required. Running the command with `-h` or `--help` will print the options and their help
+/// information.
 fn init_app() -> clap::ArgMatches<'static> {
     clap_app!(SuiteScriptGenerator =>
         (version: crate_version!())
@@ -34,6 +40,16 @@ fn init_app() -> clap::ArgMatches<'static> {
     ).get_matches()
 }
 
+/// Retrieves the contents of a specified copyright file.
+///
+/// Reads the specified file into memory. The contents are trimmed to remove any mistaken
+/// whitespaces or newlines in the file. The contents are then returned, formatted with one blank
+/// line after the final content line of the copyright message. Returns an empty string if no file
+/// is specified.
+///
+/// # Panics
+///
+/// The function panics if the file cannot be read
 fn get_copyright(matches: &clap::ArgMatches) -> String {
     if let Some(copyright_file) = matches.value_of("CopyrightFile") {
         let contents = std::fs::read_to_string(copyright_file).expect("Failed to read file").trim().to_string();
