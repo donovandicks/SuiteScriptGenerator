@@ -179,4 +179,16 @@ mod tests {
         assert_eq!(validate_modules(String::from("reecord")), Err(String::from("Invalid module name reecord")));
         Ok(())
     }
+
+    #[test]
+    fn test_valid_api() -> Result<(), String> {
+        assert_eq!(validate_api_version(String::from("2")), Ok(()));
+        Ok(())
+    }
+
+    #[test]
+    fn test_invalid_api() -> Result<(), String> {
+        assert_eq!(validate_api_version(String::from("1")), Err(String::from("Invalid API version")));
+        Ok(())
+    }
 }
