@@ -215,4 +215,17 @@ mod tests {
         assert_eq!(validate_file(Path::new("test")), "File name missing extension");
         Ok(())
     }
+
+    #[test]
+    fn test_valid_copyright() -> Result<(), String> {
+        assert_eq!(validate_copyright_file(String::from("copyright.txt")), Ok(()));
+        Ok(())
+    }
+
+    #[test]
+    fn test_invalid_copyright() -> Result<(), String> {
+        assert_eq!(validate_copyright_file(String::from("copyright")),
+            Err(String::from("Invalid file type: copyright file must be a text file.")));
+        Ok(())
+    }
 }
