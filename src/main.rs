@@ -132,9 +132,8 @@ fn map_module_to_name(module: &str) -> String {
 /// Converts a given module name to its supported NetSuite name.
 ///
 /// Maps over a vector of module names, applying `map_module_to_name` to each name.
-fn get_module_names(modules: clap::Values) -> Vec<String> {
-    let mods: Vec<&str> = modules.collect();
-    mods.iter().map(|name| map_module_to_name(name)).collect()
+fn get_module_names(modules: &Vec<&str>) -> Vec<String> {
+    modules.iter().map(|name| map_module_to_name(name)).collect()
 }
 
 /// Formats a list of NetSuite module names into the correct import string.
@@ -158,7 +157,7 @@ fn format_args(modules: &Vec<String>) -> String {
 /// an AMD module with no imports.
 fn get_modules(matches: &clap::ArgMatches) -> String {
     if let Some(modules) = matches.values_of("Modules") {
-        let mods = get_module_names(modules);
+        let mods = get_module_names(&modules.collect());
         return format!("  'N/{}',\n], ({}) => {{\n", format_imports(&mods), format_args(&mods));
     } else {
         return String::from("], () => {\n");
@@ -337,5 +336,28 @@ mod tests {
     fn test_invalid_script_parent_dir() {
         assert_eq!(validate_file_name(String::from("nonexistent/test.js")), 
             Err(String::from("Parent directory does not exist")));
+    }
+
+    #[test]
+    fn test_format_imports() {
+        assert_eq!(format_imports(&vec!["record".into(), "search".into()]),
+            String::from("record',\n  'N/search"))
+    }
+
+    #[test]
+    fn test_format_args() {
+        assert_eq!(format_args(&vec!["record".into(), "search".into()]),
+            String::from("record, search"))
+    }
+
+    #[test]
+    fn test_get_mod_names() {
+        assert_eq!(get_module_names(&vec!["rEcOrD", "RECORDcontext"]),
+            vec![String::from("record"), String::from("recordContext")])
+    }
+
+    #[test]
+    fn test_map_script_name() {
+        assert_eq!(map_script_to_name("mApReDuCe"), "MapReduce")
     }
 }
