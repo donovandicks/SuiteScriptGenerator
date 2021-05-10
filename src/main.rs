@@ -6,6 +6,10 @@ use std::io::prelude::*;
 mod assets;
 use assets::netsuite_types::{TYPES, API, MODULES};
 
+/// Entry point for the CLI.
+///
+/// Initializes the Clap application. If input validation is successful, creates the file and
+/// populates it with the given inputs.
 fn main() {
     let matches = init_app();
     let file_name = matches.value_of("FileName").unwrap();
