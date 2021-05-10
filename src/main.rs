@@ -48,7 +48,6 @@ fn init_app() -> clap::ArgMatches<'static> {
 /// is specified.
 ///
 /// # Panics
-///
 /// The function panics if the file cannot be read
 fn get_copyright(matches: &clap::ArgMatches) -> String {
     if let Some(copyright_file) = matches.value_of("CopyrightFile") {
@@ -59,6 +58,10 @@ fn get_copyright(matches: &clap::ArgMatches) -> String {
     String::from("")
 }
 
+/// Converts a given script type name to its supported NetSuite name.
+///
+/// Converts the name to lowercase to support mangled inputs. Matches the name to the casing
+/// supported by NetSuite. If no match, an empty string is returned.
 fn map_script_to_name(stype: &str) -> &str {
     match stype.to_lowercase().as_ref() {
         "mapreduce" => "MapReduce",
@@ -72,6 +75,11 @@ fn map_script_to_name(stype: &str) -> &str {
     }
 }
 
+/// Converts a given script type to its supported NetSuite name.
+///
+/// Checks the clap args for ScriptType. Retrieves either a valid script name or an empty string.
+/// If the script name is valid, returns a string with the NScriptType tag and the script name.
+/// Otherwise, returns an empty string.
 fn get_script_type(matches: &clap::ArgMatches) -> String {
     let script_type = map_script_to_name(matches.value_of("ScriptType").unwrap_or(""));
     match script_type {
@@ -81,6 +89,10 @@ fn get_script_type(matches: &clap::ArgMatches) -> String {
     }
 }
 
+/// Maps a given module name to the valid NetSuite name.
+///
+/// Converts the module name to lowercase to support mangled inputs. Matches the name to a list of
+/// special cases, or returns the lowercase name if no case applies.
 fn map_module_to_name(module: &str) -> String {
     let lower_case = module.to_lowercase();
     match lower_case.as_str() {
@@ -94,11 +106,25 @@ fn map_module_to_name(module: &str) -> String {
     }
 }
 
+/// Converts a given module name to its supported NetSuite name.
+///
+/// Maps over a vector of module names, applying `map_module_to_name` to each name.
 fn get_module_names(modules: clap::Values) -> Vec<String> {
     let mods: Vec<&str> = modules.collect();
     mods.iter().map(|name| map_module_to_name(name)).collect()
 }
 
+/// Writes the given SuiteScript import modules to the file.
+///
+/// Checks the clap args for Modules. If none, writes the closing square bracket and empty argument
+/// list. If there are matches, they are joined together twice. The first join prefixes the module
+/// names with `N/` and surrounds them in single quotes, ending with a comma and a newline. The
+/// second join combines them with a comma and a space. The first join is written inside the square
+/// brackets that appear in the define call for the AMD modules. The second join is written inside
+/// the parens after the closing square bracket, defining the AMD module arguments.
+///
+/// The joins are written to the file in order, along with the other symbols required to properly
+/// define an AMD module.
 fn write_modules(file: &mut File, matches: &clap::ArgMatches) {
     if let Some(modules) = matches.values_of("Modules") {
         let mods = get_module_names(modules);
@@ -110,14 +136,24 @@ fn write_modules(file: &mut File, matches: &clap::ArgMatches) {
     }
 }
 
+/// Creates a file with a given name.
 fn create_file(file_name: &str) -> File {
     File::create(file_name).unwrap()
 }
 
+/// Writes given contents to a given file.
 fn write_to_file(file: &mut File, contents: &str) {
     file.write_all(contents.as_bytes()).unwrap();
 }
 
+/// Checks if a file has an extension.
+///
+/// Retrieves the file extension from a given path, if available. Otherwise, returns a message that
+/// the path does not have an extension.
+///
+/// # Panics
+///
+/// Panics if the path extension is not valid unicode.
 fn validate_file(path: &Path) -> &str {
     if let Some(ext) = path.extension() {
         ext.to_str().unwrap()
@@ -126,6 +162,10 @@ fn validate_file(path: &Path) -> &str {
     }
 }
 
+/// Validates a given file name for a copyright file.
+///
+/// A copyright file is required to be a text file. It is assumed that the contents of the file
+/// contain a JSDoc style doc comment with a copyright message.
 fn validate_copyright_file(name: String) -> Result<(), String> {
     let path = Path::new(&name);
     let ext = validate_file(path);
@@ -136,6 +176,10 @@ fn validate_copyright_file(name: String) -> Result<(), String> {
     Ok(())
 }
 
+/// Validates a given file name for a SuiteScript file.
+///
+/// The file name is checked for its extension and existing parent directories if applicable.
+/// SuiteScript files must have a `.js` extension.
 fn validate_file_name(name: String) -> Result<(), String> {
     let path = Path::new(&name);
     let ext = validate_file(path);
@@ -154,6 +198,10 @@ fn validate_file_name(name: String) -> Result<(), String> {
     Ok(())
 }
 
+/// Validates a given SuiteScript script type against the list of supported script types.
+///
+/// Converts the given script name to lowercase to support mangled inputs. Checks the lowercase
+/// name against the list of supported script types in `assets/`.
 fn validate_script_type(name: String) -> Result<(), String> {
     let lower_case = name.to_lowercase();
     if TYPES.contains(&&lower_case[..]) {
@@ -163,6 +211,7 @@ fn validate_script_type(name: String) -> Result<(), String> {
     Err(String::from("Invalid script type"))
 }
 
+/// Validates a given SuiteScript API version against the list of supported versions.
 fn validate_api_version(api: String) -> Result<(), String> {
     if API.contains(&&api[..]) {
         return Ok(());
@@ -171,6 +220,10 @@ fn validate_api_version(api: String) -> Result<(), String> {
     Err(String::from("Invalid API version"))
 }
 
+/// Validates a given NetSuite module name against the list of supported modules.
+///
+/// Converts the given module to lowercase to support mangled inputs. Checks the lowercase name
+/// against the list of supported modules in `assets/`.
 fn validate_modules(name: String) -> Result<(), String> {
     let lower_case = name.to_lowercase();
     if !MODULES.contains(&&lower_case[..]) {
