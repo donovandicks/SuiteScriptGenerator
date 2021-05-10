@@ -48,4 +48,4 @@ To create a file with a copyright doc comment:
 - [ ] Support custom names for module arguments
 - [ ] Support custom modules with local or absolute paths
 - [ ] Unit tests
-- [ ] Docs
+- [X] Docs
