@@ -121,26 +121,22 @@ fn get_module_names(modules: clap::Values) -> Vec<String> {
     mods.iter().map(|name| map_module_to_name(name)).collect()
 }
 
+fn format_imports(modules: &Vec<String>) -> String {
+    modules.join("',\n  'N/")
+}
+
+fn format_args(modules: &Vec<String>) -> String {
+    modules.join(", ")
+}
+
 /// Writes the given SuiteScript import modules to the file.
 ///
-/// Checks the clap args for Modules. If none, writes the closing square bracket and empty argument
-/// list. If there are matches, they are joined together twice. The first join prefixes the module
-/// names with `N/` and surrounds them in single quotes, ending with a comma and a newline. The
-/// second join combines them with a comma and a space. The first join is written inside the square
-/// brackets that appear in the define call for the AMD modules. The second join is written inside
-/// the parens after the closing square bracket, defining the AMD module arguments.
-///
-/// The joins are written to the file in order, along with the other symbols required to properly
-/// define an AMD module.
+/// Checks the clap args for Modules. 
 fn get_modules(matches: &clap::ArgMatches) -> String {
     if let Some(modules) = matches.values_of("Modules") {
         let mods = get_module_names(modules);
-        let imports = mods.join("',\n  'N/");
-        let args = mods.join(", ");
-        // write_to_file(file, format!("  'N/{}',\n], ({}) => {{\n", imports, args).as_ref());
-        return format!("  'N/{}',\n], ({}) => {{\n", imports, args);
+        return format!("  'N/{}',\n], ({}) => {{\n", format_imports(&mods), format_args(&mods));
     } else {
-        // write_to_file(file, &"], () => {\n");
         return String::from("], () => {\n");
     }
 }
