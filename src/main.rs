@@ -10,6 +10,10 @@ use assets::netsuite_types::{TYPES, API, MODULES};
 ///
 /// Initializes the Clap application. If input validation is successful, creates the file and
 /// populates it with the given inputs.
+///
+/// # Panics
+///
+/// Panics if the FileName option was not passed in.
 fn main() {
     let matches = init_app();
     let file_name = matches.value_of("FileName").unwrap();
