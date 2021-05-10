@@ -15,13 +15,17 @@ fn main() {
     let file_name = matches.value_of("FileName").unwrap();
     let mut file = create_file(file_name);
 
-    write_to_file(&mut file, format!("{}/**\n{}", get_copyright(&matches), get_script_type(&matches)).as_ref());
-
     let api = matches.value_of("APIVersion").unwrap_or("2.1");
-    write_to_file(&mut file, format!(" * @NApiVersion {}\n */\n\ndefine([\n", api).as_ref());
+    
+    let contents = format!(
+        "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n",
+        get_copyright(&matches),
+        get_script_type(&matches),
+        api
+    );
 
+    write_to_file(&mut file, contents.as_ref());
     write_modules(&mut file, &matches);
-
     write_to_file(&mut file, &"\n});");
 }
 
