@@ -121,17 +121,25 @@ fn get_module_names(modules: clap::Values) -> Vec<String> {
     mods.iter().map(|name| map_module_to_name(name)).collect()
 }
 
+/// Formats a list of NetSuite module names into the correct import string.
+///
+/// Joins modules with a comma, newline, and prefix of `N/`. Indentation is 2 spaces.
 fn format_imports(modules: &Vec<String>) -> String {
     modules.join("',\n  'N/")
 }
 
+/// Formats a list of NetSuite module names into an argument list.
+///
+/// Joins modules with a comma and space.
 fn format_args(modules: &Vec<String>) -> String {
     modules.join(", ")
 }
 
 /// Writes the given SuiteScript import modules to the file.
 ///
-/// Checks the clap args for Modules. 
+/// Checks the clap args for Modules. Returns a string with the formatted imports and args and the
+/// symbols around them if modules were passed in. Otherwise, returns a string with the symbols for 
+/// an AMD module with no imports.
 fn get_modules(matches: &clap::ArgMatches) -> String {
     if let Some(modules) = matches.values_of("Modules") {
         let mods = get_module_names(modules);
