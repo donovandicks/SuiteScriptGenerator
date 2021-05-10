@@ -255,89 +255,75 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_valid_mod() -> Result<(), String> {
+    fn test_valid_mod() {
         assert_eq!(validate_modules(String::from("record")), Ok(()));
-        Ok(())
     }
 
     #[test]
-    fn test_invalid_mod() -> Result<(), String> {
+    fn test_invalid_mod() {
         assert_eq!(validate_modules(String::from("reecord")), Err(String::from("Invalid module name reecord")));
-        Ok(())
     }
 
     #[test]
-    fn test_valid_api() -> Result<(), String> {
+    fn test_valid_api() {
         assert_eq!(validate_api_version(String::from("2")), Ok(()));
-        Ok(())
     }
 
     #[test]
-    fn test_invalid_api() -> Result<(), String> {
+    fn test_invalid_api() {
         assert_eq!(validate_api_version(String::from("1")), Err(String::from("Invalid API version")));
-        Ok(())
     }
 
     #[test]
-    fn test_valid_script_type() -> Result<(), String> {
+    fn test_valid_script_type() {
         assert_eq!(validate_script_type(String::from("mapreduce")), Ok(()));
-        Ok(())
     }
 
     #[test]
-    fn test_invalid_script_type() -> Result<(), String> {
+    fn test_invalid_script_type() {
         assert_eq!(validate_script_type(String::from("rest")), Err(String::from("Invalid script type")));
-        Ok(())
     }
 
     #[test]
-    fn test_valid_file() -> Result<(), String> {
+    fn test_valid_file() {
         assert_eq!(validate_file(Path::new("test.js")), "js");
-        Ok(())
     }
 
     #[test]
-    fn test_invalid_file() -> Result<(), String> {
+    fn test_invalid_file() {
         assert_eq!(validate_file(Path::new("test")), "File name missing extension");
-        Ok(())
     }
 
     #[test]
-    fn test_valid_copyright() -> Result<(), String> {
+    fn test_valid_copyright() {
         assert_eq!(validate_copyright_file(String::from("copyright.txt")), Ok(()));
-        Ok(())
     }
 
     #[test]
-    fn test_invalid_copyright() -> Result<(), String> {
+    fn test_invalid_copyright() {
         assert_eq!(validate_copyright_file(String::from("copyright")),
             Err(String::from("Invalid file type: copyright file must be a text file.")));
-        Ok(())
     }
 
     #[test]
-    fn test_valid_script_file() -> Result<(), String> {
+    fn test_valid_script_file() {
         assert_eq!(validate_file_name(String::from("test.js")), Ok(()));
-        Ok(())
     }
 
     #[test]
-    fn test_invalid_script_file() -> Result<(), String> {
+    fn test_invalid_script_file() {
         assert_eq!(validate_file_name(String::from("test")),
             Err(String::from("Invalid file type: SuiteScript file must be a JavaScript file.")));
-        Ok(())
     }
 
     #[test]
-    fn test_valid_script_parent_dir() -> Result<(), String> {
+    fn test_valid_script_parent_dir() {
         assert_eq!(validate_file_name(String::from("src/test.js")), Ok(()));
-        Ok(())
     }
 
     #[test]
-    fn test_invalid_script_parent_dir() -> Result<(), String> {
+    fn test_invalid_script_parent_dir() {
         assert_eq!(validate_file_name(String::from("nonexistent/test.js")), 
             Err(String::from("Parent directory does not exist")));
-        Ok(())
     }
 }
