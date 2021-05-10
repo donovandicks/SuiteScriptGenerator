@@ -16,16 +16,13 @@ use assets::netsuite_types::{TYPES, API, MODULES};
 /// Panics if the FileName option was not passed in.
 fn main() {
     let matches = init_app();
-    let file_name = matches.value_of("FileName").unwrap();
-    let mut file = create_file(file_name);
-
-    let api = matches.value_of("APIVersion").unwrap_or("2.1");
+    let mut file = create_file(get_file_name(&matches).as_ref());
     
     let contents = format!(
         "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n{}\n}});",
         get_copyright(&matches),
         get_script_type(&matches),
-        api,
+        get_api_version(&matches),
         get_modules(&matches),
     );
 
@@ -49,6 +46,21 @@ fn init_app() -> clap::ArgMatches<'static> {
         (@arg Modules: -m --modules +takes_value +multiple {validate_modules} "The SuiteScript API modules (N/*) to import into the project")
         (@arg CopyrightFile: -c --copyright +takes_value {validate_copyright_file} "A text file containing a copyright doc comment")
     ).get_matches()
+}
+
+/// Gets the file name from the input argument.
+///
+/// # Panics
+/// Panics if the input is empty or not passed at all
+fn get_file_name(matches: &clap::ArgMatches) -> String {
+    matches.value_of("FileName").unwrap().to_owned()
+}
+
+/// Gets the SuiteScript API version to be used.
+///
+/// Retrieves the value passed into the CLI if available, otherwise defaults to 2.1
+fn get_api_version(matches: &clap::ArgMatches) -> String {
+    matches.value_of("APIVersion").unwrap_or("2.1").to_owned()
 }
 
 /// Retrieves the contents of a specified copyright file.
