@@ -39,6 +39,9 @@ To create a file with imported modules:
 To create a file with a copyright doc comment:
 `suitescript -f copyright.js -c copyright.txt`
 
+And any combination:
+`suitescript -f combo.js -c copyright.txt -v 2.x -m record search -t client`
+
 ## TODOs
 - [X] Parameterize the copyright message
 - [X] Pull out constants to another file
