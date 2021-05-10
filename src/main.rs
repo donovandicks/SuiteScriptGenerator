@@ -18,15 +18,14 @@ fn main() {
     let api = matches.value_of("APIVersion").unwrap_or("2.1");
     
     let contents = format!(
-        "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n",
+        "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n{}\n}});",
         get_copyright(&matches),
         get_script_type(&matches),
-        api
+        api,
+        get_modules(&matches),
     );
 
     write_to_file(&mut file, contents.as_ref());
-    write_modules(&mut file, &matches);
-    write_to_file(&mut file, &"\n});");
 }
 
 /// Initializes the CLI application
@@ -133,14 +132,16 @@ fn get_module_names(modules: clap::Values) -> Vec<String> {
 ///
 /// The joins are written to the file in order, along with the other symbols required to properly
 /// define an AMD module.
-fn write_modules(file: &mut File, matches: &clap::ArgMatches) {
+fn get_modules(matches: &clap::ArgMatches) -> String {
     if let Some(modules) = matches.values_of("Modules") {
         let mods = get_module_names(modules);
         let imports = mods.join("',\n  'N/");
         let args = mods.join(", ");
-        write_to_file(file, format!("  'N/{}',\n], ({}) => {{\n", imports, args).as_ref());
+        // write_to_file(file, format!("  'N/{}',\n], ({}) => {{\n", imports, args).as_ref());
+        return format!("  'N/{}',\n], ({}) => {{\n", imports, args);
     } else {
-        write_to_file(file, &"], () => {\n");
+        // write_to_file(file, &"], () => {\n");
+        return String::from("], () => {\n");
     }
 }
 
