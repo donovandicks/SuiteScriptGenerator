@@ -147,7 +147,8 @@ fn format_imports(modules: &Vec<String>) -> String {
 ///
 /// Joins modules with a comma and space.
 fn format_args(modules: &Vec<String>) -> String {
-    modules.join(", ")
+    let cleaned: Vec<String> = modules.iter().map(|name| name.replace('/', "")).collect();
+    cleaned.join(", ")
 }
 
 /// Writes the given SuiteScript import modules to the file.
@@ -346,8 +347,8 @@ mod tests {
 
     #[test]
     fn test_format_args() {
-        assert_eq!(format_args(&vec!["record".into(), "search".into()]),
-            String::from("record, search"))
+        assert_eq!(format_args(&vec!["record".into(), "search".into(), "ui/dialog".into()]),
+            String::from("record, search, uidialog"))
     }
 
     #[test]
