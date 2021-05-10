@@ -31,12 +31,10 @@ struct Opt {
 
 /// Entry point for the CLI.
 ///
-/// Initializes the Clap application. If input validation is successful, creates the file and
-/// populates it with the given inputs.
+/// Initializes the application. If input validation is successful, creates the file and
+/// populates it according to the given inputs.
 fn main() {
     let config = Opt::from_args();
-    println!("{:?}", config);
-
     let mut file = create_file(&config.file_name);
     
     let contents = format!(
@@ -51,8 +49,6 @@ fn main() {
 }
 
 /// Gets the SuiteScript API version to be used.
-///
-/// Retrieves the value passed into the CLI if available, otherwise defaults to 2.1
 fn get_api_version(version: &str) -> String {
     match version {
         "2" => String::from("2.0"),
@@ -97,7 +93,6 @@ fn map_script_to_name(stype: &str) -> &str {
 
 /// Converts a given script type to its supported NetSuite name.
 ///
-/// Checks the clap args for ScriptType. Retrieves either a valid script name or an empty string.
 /// If the script name is valid, returns a string with the NScriptType tag and the script name.
 /// Otherwise, returns an empty string.
 fn get_script_type(script_type: &str) -> String {
@@ -150,9 +145,8 @@ fn format_args(modules: &Vec<String>) -> String {
 
 /// Writes the given SuiteScript import modules to the file.
 ///
-/// Checks the clap args for Modules. Returns a string with the formatted imports and args and the
-/// symbols around them if modules were passed in. Otherwise, returns a string with the symbols for 
-/// an AMD module with no imports.
+/// Returns a string with the formatted imports and args and the symbols around them if modules
+/// were passed in. Otherwise, returns a string with the symbols for an AMD module with no imports.
 fn get_modules(modules: &Vec<String>) -> String {
     if modules == &vec![String::from("")] {
         return String::from("], () => {\n");
