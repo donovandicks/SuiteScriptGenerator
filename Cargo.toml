@@ -9,4 +9,4 @@ keywords = ["NetSuite", "SuiteScript", "JavaScript"]
 categories = ["command-line-utilities", "command-line-interface"]
 
 [dependencies]
-clap = "2"
+structopt = "0.3"
