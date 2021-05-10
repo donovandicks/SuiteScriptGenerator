@@ -1,5 +1,3 @@
-#[macro_use]
-extern crate clap;
 use structopt::StructOpt;
 use std::fs::File;
 use std::path::{Path, PathBuf};
@@ -27,8 +25,8 @@ struct Opt {
     modules: Vec<String>,
 
     /// Path to a file containing your company's copyright message
-    #[structopt(short, long = "copyright", default_value = "", validator = validate_copyright_file)]
-    copyright: String
+    #[structopt(short, long = "copyright", parse(from_os_str), default_value = "", validator = validate_copyright_file)]
+    copyright: PathBuf
 }
 
 /// Entry point for the CLI.
@@ -39,52 +37,23 @@ fn main() {
     let config = Opt::from_args();
     println!("{:?}", config);
 
-    // let matches = init_app();
-    // let mut file = create_file(get_file_name(&matches).as_ref());
+    let mut file = create_file(&config.file_name);
     
-    // let contents = format!(
-    //     "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n{}\n}});",
-    //     get_copyright(&matches),
-    //     get_script_type(&matches),
-    //     get_api_version(&matches),
-    //     get_modules(&matches),
-    // );
+    let contents = format!(
+        "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n{}\n}});",
+        get_copyright(&config.copyright),
+        get_script_type(config.script_type.as_ref()),
+        get_api_version(config.api_version.as_ref()),
+        get_modules(&config.modules),
+    );
 
-    // write_to_file(&mut file, contents.as_ref());
-}
-
-/// Initializes the CLI application
-///
-/// The CLI is started with several options. The default configuration is to generate a file with
-/// no copyright, no imports, no script type, and with API version 2.1. The script file name is
-/// required. Running the command with `-h` or `--help` will print the options and their help
-/// information.
-fn init_app() -> clap::ArgMatches<'static> {
-    clap_app!(SuiteScriptGenerator =>
-        (version: crate_version!())
-        (author: crate_authors!())
-        (about: crate_description!())
-        (@arg FileName: -f --filename +takes_value +required {validate_file_name} "The name of the JavaScript file to be created")
-        (@arg ScriptType: -t --stype +takes_value {validate_script_type} "The type of SuiteScript to create")
-        (@arg APIVersion: -v --version +takes_value {validate_api_version} "The SuiteScript API Version to use")
-        (@arg Modules: -m --modules +takes_value +multiple {validate_modules} "The SuiteScript API modules (N/*) to import into the project")
-        (@arg CopyrightFile: -c --copyright +takes_value {validate_copyright_file} "A text file containing a copyright doc comment")
-    ).get_matches()
-}
-
-/// Gets the file name from the input argument.
-///
-/// # Panics
-/// Panics if the input is empty or not passed at all
-fn get_file_name(matches: &clap::ArgMatches) -> String {
-    matches.value_of("FileName").unwrap().to_owned()
+    write_to_file(&mut file, contents.as_ref());
 }
 
 /// Gets the SuiteScript API version to be used.
 ///
 /// Retrieves the value passed into the CLI if available, otherwise defaults to 2.1
-fn get_api_version(matches: &clap::ArgMatches) -> String {
-    let version = matches.value_of("APIVersion").unwrap_or("2.1");
+fn get_api_version(version: &str) -> String {
     match version {
         "2" => String::from("2.0"),
         _ => version.to_owned(),
@@ -100,13 +69,13 @@ fn get_api_version(matches: &clap::ArgMatches) -> String {
 ///
 /// # Panics
 /// The function panics if the file cannot be read
-fn get_copyright(matches: &clap::ArgMatches) -> String {
-    if let Some(copyright_file) = matches.value_of("CopyrightFile") {
-        let contents = std::fs::read_to_string(copyright_file).expect("Failed to read file").trim().to_string();
-        return format!("{}\n\n", contents);
+fn get_copyright(copyright: &PathBuf) -> String {
+    if copyright.to_str().unwrap() == "" {
+        return String::from("");
     }
 
-    String::from("")
+    let contents = std::fs::read_to_string(copyright).expect("Failed to read file").trim().to_string();
+    format!("{}\n\n", contents)
 }
 
 /// Converts a given script type name to its supported NetSuite name.
@@ -131,10 +100,10 @@ fn map_script_to_name(stype: &str) -> &str {
 /// Checks the clap args for ScriptType. Retrieves either a valid script name or an empty string.
 /// If the script name is valid, returns a string with the NScriptType tag and the script name.
 /// Otherwise, returns an empty string.
-fn get_script_type(matches: &clap::ArgMatches) -> String {
-    let script_type = map_script_to_name(matches.value_of("ScriptType").unwrap_or(""));
-    match script_type {
-        "MapReduce" | "UserEvent" | "Scheduled" | "Client" => format!(" * @NScriptType {}Script\n", script_type),
+fn get_script_type(script_type: &str) -> String {
+    let script_name = map_script_to_name(script_type);
+    match script_name {
+        "MapReduce" | "UserEvent" | "Scheduled" | "Client" => format!(" * @NScriptType {}Script\n", script_name),
         "" => String::from(""),
         _ => format!(" * @NScriptType {}\n", script_type),
     }
@@ -160,7 +129,7 @@ fn map_module_to_name(module: &str) -> String {
 /// Converts a given module name to its supported NetSuite name.
 ///
 /// Maps over a vector of module names, applying `map_module_to_name` to each name.
-fn get_module_names(modules: &Vec<&str>) -> Vec<String> {
+fn get_module_names(modules: &Vec<String>) -> Vec<String> {
     modules.iter().map(|name| map_module_to_name(name)).collect()
 }
 
@@ -184,17 +153,17 @@ fn format_args(modules: &Vec<String>) -> String {
 /// Checks the clap args for Modules. Returns a string with the formatted imports and args and the
 /// symbols around them if modules were passed in. Otherwise, returns a string with the symbols for 
 /// an AMD module with no imports.
-fn get_modules(matches: &clap::ArgMatches) -> String {
-    if let Some(modules) = matches.values_of("Modules") {
-        let mods = get_module_names(&modules.collect());
-        return format!("  'N/{}',\n], ({}) => {{\n", format_imports(&mods), format_args(&mods));
-    } else {
+fn get_modules(modules: &Vec<String>) -> String {
+    if modules == &vec![String::from("")] {
         return String::from("], () => {\n");
     }
+
+    let mods = get_module_names(modules);
+    format!("  'N/{}',\n], ({}) => {{\n", format_imports(&mods), format_args(&mods))
 }
 
 /// Creates a file with a given name.
-fn create_file(file_name: &str) -> File {
+fn create_file(file_name: &PathBuf) -> File {
     File::create(file_name).unwrap()
 }
 
@@ -394,7 +363,7 @@ mod tests {
 
     #[test]
     fn test_get_mod_names() {
-        assert_eq!(get_module_names(&vec!["rEcOrD", "RECORDcontext"]),
+        assert_eq!(get_module_names(&vec![String::from("rEcOrD"), String::from("RECORDcontext")]),
             vec![String::from("record"), String::from("recordContext")])
     }
 
