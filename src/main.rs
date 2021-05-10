@@ -145,7 +145,7 @@ fn format_imports(modules: &Vec<String>) -> String {
 
 /// Formats a list of NetSuite module names into an argument list.
 ///
-/// Joins modules with a comma and space.
+/// Removes any `/` in module names. Joins modules with a comma and space.
 fn format_args(modules: &Vec<String>) -> String {
     let cleaned: Vec<String> = modules.iter().map(|name| name.replace('/', "")).collect();
     cleaned.join(", ")
