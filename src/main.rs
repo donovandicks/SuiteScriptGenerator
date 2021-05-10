@@ -1,28 +1,56 @@
 #[macro_use]
 extern crate clap;
+use structopt::StructOpt;
 use std::fs::File;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::io::prelude::*;
 mod assets;
 use assets::netsuite_types::{TYPES, API, MODULES};
+
+#[derive(StructOpt, Debug)]
+#[structopt(name = "suitescript", about = "CLI to create SuiteScript files and generate boilerplate")]
+struct Opt {
+    /// Name of the file to be generated
+    #[structopt(short, long = "filename", parse(from_os_str), validator = validate_file_name)]
+    file_name: PathBuf,
+
+    /// Type of SuiteScript to be generated
+    #[structopt(short, long = "scripttype", default_value = "", validator = validate_script_type)]
+    script_type: String,
+
+    /// Version of the SuiteScript API to use
+    #[structopt(short, long = "apiversion", default_value = "2.1", validator = validate_api_version)]
+    api_version: String,
+
+    /// SuiteScript modules to import
+    #[structopt(short, long = "modules", default_value = "", validator = validate_modules)] 
+    modules: Vec<String>,
+
+    /// Path to a file containing your company's copyright message
+    #[structopt(short, long = "copyright", default_value = "", validator = validate_copyright_file)]
+    copyright: String
+}
 
 /// Entry point for the CLI.
 ///
 /// Initializes the Clap application. If input validation is successful, creates the file and
 /// populates it with the given inputs.
 fn main() {
-    let matches = init_app();
-    let mut file = create_file(get_file_name(&matches).as_ref());
-    
-    let contents = format!(
-        "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n{}\n}});",
-        get_copyright(&matches),
-        get_script_type(&matches),
-        get_api_version(&matches),
-        get_modules(&matches),
-    );
+    let config = Opt::from_args();
+    println!("{:?}", config);
 
-    write_to_file(&mut file, contents.as_ref());
+    // let matches = init_app();
+    // let mut file = create_file(get_file_name(&matches).as_ref());
+    
+    // let contents = format!(
+    //     "{}/**\n{} * @NApiVersion {}\n */\n\ndefine([\n{}\n}});",
+    //     get_copyright(&matches),
+    //     get_script_type(&matches),
+    //     get_api_version(&matches),
+    //     get_modules(&matches),
+    // );
+
+    // write_to_file(&mut file, contents.as_ref());
 }
 
 /// Initializes the CLI application
@@ -196,6 +224,11 @@ fn validate_file(path: &Path) -> &str {
 /// A copyright file is required to be a text file. It is assumed that the contents of the file
 /// contain a JSDoc style doc comment with a copyright message.
 fn validate_copyright_file(name: String) -> Result<(), String> {
+    // TODO: Check if file exists
+    if name == "" {
+        return Ok(());
+    }
+
     let path = Path::new(&name);
     let ext = validate_file(path);
     if ext != "txt" {
@@ -232,6 +265,10 @@ fn validate_file_name(name: String) -> Result<(), String> {
 /// Converts the given script name to lowercase to support mangled inputs. Checks the lowercase
 /// name against the list of supported script types in `assets/`.
 fn validate_script_type(name: String) -> Result<(), String> {
+    if name == "" {
+        return Ok(());
+    }
+
     let lower_case = name.to_lowercase();
     if TYPES.contains(&&lower_case[..]) {
         return Ok(());
@@ -254,6 +291,10 @@ fn validate_api_version(api: String) -> Result<(), String> {
 /// Converts the given module to lowercase to support mangled inputs. Checks the lowercase name
 /// against the list of supported modules in `assets/`.
 fn validate_modules(name: String) -> Result<(), String> {
+    if name == "" {
+        return Ok(());
+    }
+
     let lower_case = name.to_lowercase();
     if !MODULES.contains(&&lower_case[..]) {
         return Err(format!("Invalid module name {}", name))
