@@ -10,10 +10,6 @@ use assets::netsuite_types::{TYPES, API, MODULES};
 ///
 /// Initializes the Clap application. If input validation is successful, creates the file and
 /// populates it with the given inputs.
-///
-/// # Panics
-///
-/// Panics if the FileName option was not passed in.
 fn main() {
     let matches = init_app();
     let mut file = create_file(get_file_name(&matches).as_ref());
@@ -60,7 +56,11 @@ fn get_file_name(matches: &clap::ArgMatches) -> String {
 ///
 /// Retrieves the value passed into the CLI if available, otherwise defaults to 2.1
 fn get_api_version(matches: &clap::ArgMatches) -> String {
-    matches.value_of("APIVersion").unwrap_or("2.1").to_owned()
+    let version = matches.value_of("APIVersion").unwrap_or("2.1");
+    match version {
+        "2" => String::from("2.0"),
+        _ => version.to_owned(),
+    }
 }
 
 /// Retrieves the contents of a specified copyright file.
