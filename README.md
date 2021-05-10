@@ -25,7 +25,7 @@ The CLI does the following:
 The output files from the following commands are visible in the [examples](examples) directory.
 
 To create a simple file skeleton:
-`suitescript -f basic.js` or `suitescript --filename myFile.js`
+`suitescript -f basic.js` or `suitescript --filename basic.js`
 
 To create a file with a specific version:
 `suitescript -f versioned.js -v 2.0`
